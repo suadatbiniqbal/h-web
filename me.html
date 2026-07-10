@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Suadat Bin Iqbal — Developer</title>
+<meta name="description" content="Suadat Bin Iqbal — Mobile and systems developer. Kotlin, SwiftUI, C, C++, Python, SQL."/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── LIGHT TOKENS (dark glows on white) ── */
+:root{
+  --hero-overlay:rgba(255,255,255,0.55);
+  --bg:#f2f2f7;
+  --bg2:#e5e5ea;
+  --surface:#ffffff;
+  --border:rgba(0,0,0,0.08);
+  --border2:rgba(0,0,0,0.13);
+  --text:#1c1c1e;
+  --text2:#3a3a3c;
+  --text3:#8e8e93;
+  --blue:#0071e3;
+  --shadow-card:0 2px 16px rgba(0,0,0,0.07);
+  --glow-a:rgba(0,0,0,0.10);
+  --glow-b:rgba(0,0,0,0.07);
+  --glow-c:rgba(0,0,0,0.06);
+  --avatar-ring:#d1d1d6;
+  --matrix-color:rgba(0,0,0,0.07);
+  --matrix-char:#1c1c1e;
+  --term-bg:rgba(0,0,0,0.04);
+  --term-border:rgba(0,0,0,0.10);
+  --term-text:#1c1c1e;
+  --term-green:#15803d;
+  --term-prompt:#0071e3;
+}
+
+/* ── DARK TOKENS (light glows on black) ── */
+@media(prefers-color-scheme:dark){
+  :root{
+    --hero-overlay:rgba(0,0,0,0.62);
+    --bg:#0a0a0a;
+    --bg2:#1c1c1e;
+    --surface:#1a1a1a;
+    --border:rgba(255,255,255,0.08);
+    --border2:rgba(255,255,255,0.14);
+    --text:#f5f5f7;
+    --text2:#aeaeb2;
+    --text3:#6e6e73;
+    --blue:#2997ff;
+    --shadow-card:0 2px 20px rgba(0,0,0,0.35);
+    --glow-a:rgba(255,255,255,0.07);
+    --glow-b:rgba(255,255,255,0.05);
+    --glow-c:rgba(255,255,255,0.04);
+    --avatar-ring:#2c2c2e;
+    --matrix-color:rgba(255,255,255,0.04);
+    --matrix-char:#f5f5f7;
+    --term-bg:rgba(255,255,255,0.04);
+    --term-border:rgba(255,255,255,0.10);
+    --term-text:#f5f5f7;
+    --term-green:#4ade80;
+    --term-prompt:#2997ff;
+  }
+}
+
+html{scroll-behavior:smooth}
+body{
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  transition:background .3s,color .3s;
+}
+::selection{background:rgba(0,113,227,0.15)}
+
+/* ── HERO ── */
+.hero{
+  min-height:100svh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:80px 24px 64px;
+  position:relative;overflow:hidden;
+  text-align:center;
+}
+.hero-gif{
+  position:absolute;inset:0;z-index:0;
+  width:100%;height:100%;object-fit:cover;
+  pointer-events:none;
+}
+.hero-overlay{
+  position:absolute;inset:0;z-index:1;
+  pointer-events:none;
+  background:var(--hero-overlay);
+  backdrop-filter:blur(1px);
+}
+.hero-glow{
+  position:absolute;border-radius:50%;
+  filter:blur(110px);pointer-events:none;z-index:0;
+}
+.glow-a{width:520px;height:520px;background:var(--glow-a);top:-80px;left:-100px}
+.glow-b{width:420px;height:420px;background:var(--glow-b);top:40px;right:-60px}
+.glow-c{width:380px;height:380px;background:var(--glow-c);bottom:-40px;left:50%;transform:translateX(-50%)}
+
+.hero-inner{position:relative;z-index:3}
+
+/* ── TERMINAL CARD ── */
+.terminal{
+  background:var(--term-bg);
+  border:1px solid var(--term-border);
+  border-radius:12px;
+  padding:16px 20px;
+  text-align:left;
+  margin:0 auto 32px;
+  max-width:340px;
+  width:100%;
+  font-family:'Courier New',Courier,monospace;
+  font-size:12.5px;
+  line-height:1.7;
+  position:relative;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  opacity:0;animation:fadeUp .55s .55s ease forwards;
+}
+.term-bar{
+  display:flex;align-items:center;gap:6px;
+  margin-bottom:10px;
+  padding-bottom:10px;
+  border-bottom:1px solid var(--term-border);
+}
+.term-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.term-line{color:var(--term-text);white-space:nowrap;overflow:hidden}
+.term-prompt{color:var(--term-prompt)}
+.term-green{color:var(--term-green)}
+.term-cursor{
+  display:inline-block;width:7px;height:13px;
+  background:var(--term-text);vertical-align:middle;
+  animation:blink .9s step-end infinite;margin-left:2px;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* avatar — no ring, just clean shadow */
+.avatar{
+  width:100px;height:100px;border-radius:50%;
+  border:3px solid var(--avatar-ring);
+  object-fit:cover;display:block;
+  margin:0 auto 26px;
+  box-shadow:0 4px 24px rgba(0,0,0,0.12);
+  opacity:0;animation:fadeUp .55s .05s ease forwards;
+}
+
+.hero-eyebrow{
+  font-size:11.5px;font-weight:500;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text3);margin-bottom:14px;
+  opacity:0;animation:fadeUp .55s .16s ease forwards;
+}
+.hero-name{
+  font-size:clamp(46px,7.5vw,84px);
+  font-weight:700;letter-spacing:-.04em;
+  line-height:1.02;color:var(--text);margin-bottom:10px;
+  opacity:0;animation:fadeUp .55s .26s ease forwards;
+}
+.hero-sub{
+  font-size:clamp(15px,2.2vw,20px);
+  font-weight:300;font-style:italic;
+  color:var(--text3);line-height:1.5;margin-bottom:38px;
+  opacity:0;animation:fadeUp .55s .36s ease forwards;
+}
+.hero-btns{
+  display:flex;gap:11px;flex-wrap:wrap;justify-content:center;
+  opacity:0;animation:fadeUp .55s .46s ease forwards;
+}
+.btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:11px 22px;border-radius:980px;
+  font-size:14px;font-weight:500;font-family:inherit;
+  text-decoration:none;border:none;cursor:pointer;
+  transition:transform .2s,box-shadow .2s,background .2s,color .2s;
+}
+.btn-dark{background:var(--text);color:var(--bg)}
+.btn-dark:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(0,0,0,0.2)}
+.btn-light{background:var(--surface);color:var(--text);border:1.5px solid var(--border2)}
+.btn-light:hover{background:var(--bg2);transform:translateY(-2px);box-shadow:var(--shadow-card)}
+
+/* ── SECTION ── */
+.section{padding:80px 24px;max-width:900px;margin:0 auto}
+.sec-label{font-size:11.5px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:13px}
+.sec-title{font-size:clamp(28px,4.5vw,46px);font-weight:700;letter-spacing:-.03em;line-height:1.08;margin-bottom:46px;color:var(--text)}
+.sec-title em{font-style:italic;font-weight:300;color:var(--text3)}
+.divider{height:1px;background:var(--border);max-width:900px;margin:0 auto}
+
+/* ── SKILL CARDS ── */
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:14px}
+.skill-card{
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:16px;padding:20px 18px;
+  display:flex;align-items:center;gap:13px;
+  transition:transform .25s,box-shadow .25s,border-color .25s;
+  cursor:default;position:relative;overflow:hidden;
+}
+.skill-card::before{
+  content:'';position:absolute;inset:0;
+  opacity:0;transition:opacity .3s;border-radius:inherit;
+}
+.skill-card:hover{transform:translateY(-4px);border-color:transparent}
+.skill-card:hover::before{opacity:1}
+.sk-kotlin:hover{box-shadow:0 14px 44px rgba(110,63,243,.22)}
+.sk-kotlin::before{background:linear-gradient(135deg,rgba(110,63,243,.07),rgba(233,30,140,.05))}
+.sk-swift:hover{box-shadow:0 14px 44px rgba(255,107,43,.22)}
+.sk-swift::before{background:linear-gradient(135deg,rgba(255,107,43,.07),rgba(233,30,140,.05))}
+.sk-c:hover{box-shadow:0 14px 44px rgba(0,113,227,.2)}
+.sk-c::before{background:linear-gradient(135deg,rgba(0,113,227,.07),rgba(48,209,88,.05))}
+.sk-cpp:hover{box-shadow:0 14px 44px rgba(0,113,227,.2)}
+.sk-cpp::before{background:linear-gradient(135deg,rgba(0,113,227,.07),rgba(110,63,243,.05))}
+.sk-python:hover{box-shadow:0 14px 44px rgba(48,209,88,.2)}
+.sk-python::before{background:linear-gradient(135deg,rgba(48,209,88,.07),rgba(0,113,227,.05))}
+.sk-sql:hover{box-shadow:0 14px 44px rgba(255,107,43,.2)}
+.sk-sql::before{background:linear-gradient(135deg,rgba(255,107,43,.07),rgba(48,209,88,.05))}
+.skill-logo{width:28px;height:28px;flex-shrink:0;position:relative;z-index:1}
+.skill-info{position:relative;z-index:1}
+.skill-name{font-size:14px;font-weight:600;color:var(--text);line-height:1.2}
+.skill-type{font-size:11px;font-style:italic;color:var(--text3);margin-top:2px}
+
+/* ── PROJECT CARDS ── */
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.proj-card{
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:20px;padding:26px 24px 22px;
+  text-decoration:none;
+  display:flex;flex-direction:column;
+  position:relative;overflow:hidden;
+  transition:transform .25s,box-shadow .25s,border-color .25s;
+}
+.proj-card::before{
+  content:'';position:absolute;inset:0;
+  opacity:0;transition:opacity .35s;border-radius:inherit;
+}
+.proj-card:hover{transform:translateY(-5px);border-color:transparent}
+.proj-card:hover::before{opacity:1}
+
+.pc-harmber::before{background:linear-gradient(145deg,rgba(110,63,243,.07),rgba(233,30,140,.05))}
+.pc-harmber:hover{box-shadow:0 22px 64px rgba(110,63,243,.2)}
+.pc-movies::before{background:linear-gradient(145deg,rgba(255,107,43,.07),rgba(233,30,140,.05))}
+.pc-movies:hover{box-shadow:0 22px 64px rgba(255,107,43,.2)}
+.pc-vetra::before{background:linear-gradient(145deg,rgba(0,113,227,.07),rgba(48,209,88,.05))}
+.pc-vetra:hover{box-shadow:0 22px 64px rgba(0,113,227,.2)}
+.pc-tcp::before{background:linear-gradient(145deg,rgba(0,113,227,.07),rgba(110,63,243,.05))}
+.pc-tcp:hover{box-shadow:0 22px 64px rgba(0,113,227,.2)}
+.pc-veil::before{background:linear-gradient(145deg,rgba(48,209,88,.07),rgba(0,113,227,.05))}
+.pc-veil:hover{box-shadow:0 22px 64px rgba(48,209,88,.2)}
+.pc-yanime::before{background:linear-gradient(145deg,rgba(255,107,43,.07),rgba(110,63,243,.05))}
+.pc-yanime:hover{box-shadow:0 22px 64px rgba(255,107,43,.2)}
+
+.proj-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;position:relative;z-index:1}
+.proj-lang-logo{width:22px;height:22px;flex-shrink:0;margin-right:9px;opacity:.85}
+.proj-title-row{display:flex;align-items:center}
+.proj-title{font-size:15.5px;font-weight:600;color:var(--text);letter-spacing:-.01em}
+.proj-arrow{font-size:15px;color:var(--text3);transition:transform .2s,color .2s;flex-shrink:0}
+.proj-card:hover .proj-arrow{transform:translate(3px,-3px);color:var(--text)}
+.proj-desc{font-size:13px;font-weight:300;color:var(--text2);line-height:1.58;margin-bottom:18px;flex:1;position:relative;z-index:1}
+.proj-footer{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+.proj-tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:11px;font-weight:400;letter-spacing:.03em;color:var(--text3);background:var(--bg);border:1px solid var(--border2);padding:3px 9px;border-radius:980px}
+.proj-stars{font-size:12px;color:var(--text3);white-space:nowrap}
+
+/* ── CONTACT ── */
+.contact-card{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:20px;padding:60px 48px;text-align:center;
+  position:relative;overflow:hidden;
+}
+.contact-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,var(--glow-a) 0%,transparent 65%);
+  pointer-events:none;
+}
+.contact-glow{
+  position:absolute;width:360px;height:180px;border-radius:50%;
+  background:var(--glow-a);filter:blur(60px);
+  top:-60px;left:50%;transform:translateX(-50%);pointer-events:none;
+}
+.contact-label{font-size:11.5px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:13px;position:relative;z-index:1}
+.contact-title{font-size:clamp(26px,4vw,42px);font-weight:700;letter-spacing:-.03em;color:var(--text);margin-bottom:8px;position:relative;z-index:1}
+.contact-italic{font-size:16px;font-weight:300;font-style:italic;color:var(--text3);margin-bottom:30px;position:relative;z-index:1}
+.contact-email{font-size:15px;font-weight:400;color:var(--blue);text-decoration:none;display:block;margin-bottom:30px;transition:opacity .2s;position:relative;z-index:1}
+.contact-email:hover{opacity:.6}
+.contact-btns{display:flex;gap:12px;justify-content:center;position:relative;z-index:1}
+
+footer{text-align:center;padding:34px 24px;font-size:12px;color:var(--text3);border-top:1px solid var(--border);letter-spacing:.02em}
+
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s cubic-bezier(.25,.1,.25,1),transform .6s cubic-bezier(.25,.1,.25,1)}
+.reveal.visible{opacity:1;transform:none}
+.stagger .reveal:nth-child(1){transition-delay:.04s}
+.stagger .reveal:nth-child(2){transition-delay:.09s}
+.stagger .reveal:nth-child(3){transition-delay:.14s}
+.stagger .reveal:nth-child(4){transition-delay:.19s}
+.stagger .reveal:nth-child(5){transition-delay:.24s}
+.stagger .reveal:nth-child(6){transition-delay:.29s}
+
+@keyframes fadeUp{to{opacity:1;transform:none}}
+
+@media(max-width:600px){
+  .section{padding:64px 20px}
+  .contact-card{padding:40px 22px}
+  .projects-grid{grid-template-columns:1fr}
+  .contact-btns{flex-direction:column;align-items:center}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <img class="hero-gif" src="bg.gif" alt="" aria-hidden="true" referrerpolicy="no-referrer" crossorigin="anonymous"/>
+  <div class="hero-overlay"></div>
+  <div class="hero-glow glow-a"></div>
+  <div class="hero-glow glow-b"></div>
+  <div class="hero-glow glow-c"></div>
+  <div class="hero-inner">
+    <img class="avatar" src="https://avatars.githubusercontent.com/u/230374423?v=4" alt="Suadat Bin Iqbal"/>
+    <p class="hero-eyebrow">Developer</p>
+    <h1 class="hero-name">Suadat Bin Iqbal.</h1>
+    <p class="hero-sub">Building mobile apps, systems software,<br><em>and things that are a bit unusual.</em></p>
+    <div class="terminal">
+      <div class="term-bar">
+        <div class="term-dot" style="background:#ff5f57"></div>
+        <div class="term-dot" style="background:#febc2e"></div>
+        <div class="term-dot" style="background:#28c840"></div>
+      </div>
+      <div id="term-lines"></div>
+      <span id="term-cursor" class="term-cursor" style="display:none"></span>
+    </div>
+    <div class="hero-btns">
+      <a href="#projects" class="btn btn-dark">View Work</a>
+      <a href="https://github.com/suadatbiniqbal" target="_blank" rel="noopener" class="btn btn-light">GitHub</a>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SKILLS -->
+<section class="section" id="skills">
+  <p class="sec-label reveal">Expertise</p>
+  <h2 class="sec-title reveal">Languages &amp; <em>tools.</em></h2>
+  <div class="skills-grid stagger">
+
+    <div class="skill-card sk-kotlin reveal">
+      <img class="skill-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kotlin/kotlin-original.svg" alt="Kotlin"/>
+      <div class="skill-info">
+        <div class="skill-name">Kotlin</div>
+        <div class="skill-type">Android · JVM</div>
+      </div>
+    </div>
+
+    <div class="skill-card sk-swift reveal">
+      <img class="skill-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/swift/swift-original.svg" alt="Swift"/>
+      <div class="skill-info">
+        <div class="skill-name">Swift UI</div>
+        <div class="skill-type">iOS · Apple</div>
+      </div>
+    </div>
+
+    <div class="skill-card sk-c reveal">
+      <img class="skill-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/c/c-original.svg" alt="C"/>
+      <div class="skill-info">
+        <div class="skill-name">C</div>
+        <div class="skill-type">Systems</div>
+      </div>
+    </div>
+
+    <div class="skill-card sk-cpp reveal">
+      <img class="skill-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg" alt="C++"/>
+      <div class="skill-info">
+        <div class="skill-name">C++</div>
+        <div class="skill-type">Systems · Networking</div>
+      </div>
+    </div>
+
+    <div class="skill-card sk-python reveal">
+      <img class="skill-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" alt="Python"/>
+      <div class="skill-info">
+        <div class="skill-name">Python</div>
+        <div class="skill-type">Scripting · Tools</div>
+      </div>
+    </div>
+
+    <div class="skill-card sk-sql reveal">
+      <img class="skill-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original.svg" alt="SQL"/>
+      <div class="skill-info">
+        <div class="skill-name">SQL</div>
+        <div class="skill-type">Databases</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROJECTS -->
+<section class="section" id="projects">
+  <p class="sec-label reveal">Selected Work</p>
+  <h2 class="sec-title reveal">Projects <em>from GitHub.</em></h2>
+  <div class="projects-grid stagger">
+
+    <a class="proj-card pc-harmber reveal" href="https://github.com/suadatbiniqbal/harmber" target="_blank" rel="noopener">
+      <div class="proj-top">
+        <div class="proj-title-row">
+          <img class="proj-lang-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kotlin/kotlin-original.svg" alt="Kotlin"/>
+          <div class="proj-title">Harmber</div>
+        </div>
+        <span class="proj-arrow">&#8599;</span>
+      </div>
+      <p class="proj-desc">Modern Android music player with Spotify integration. Fast, clean, Material Design — built with Kotlin.</p>
+      <div class="proj-footer">
+        <div class="proj-tags"><span class="tag">Kotlin</span><span class="tag">Android</span><span class="tag">Spotify</span></div>
+        <span class="proj-stars">55 stars</span>
+      </div>
+    </a>
+
+    <a class="proj-card pc-movies reveal" href="https://github.com/suadatbiniqbal/harmbermovies" target="_blank" rel="noopener">
+      <div class="proj-top">
+        <div class="proj-title-row">
+          <img class="proj-lang-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dart/dart-original.svg" alt="Dart"/>
+          <div class="proj-title">Harmber Movies</div>
+        </div>
+        <span class="proj-arrow">&#8599;</span>
+      </div>
+      <p class="proj-desc">Clean, fast Flutter movie app. Browse, search, and stream content with a smooth UI powered by TMDB.</p>
+      <div class="proj-footer">
+        <div class="proj-tags"><span class="tag">Flutter</span><span class="tag">Dart</span><span class="tag">TMDB</span></div>
+        <span class="proj-stars">12 stars</span>
+      </div>
+    </a>
+
+    <a class="proj-card pc-vetra reveal" href="https://github.com/suadatbiniqbal/vetra-providers" target="_blank" rel="noopener">
+      <div class="proj-top">
+        <div class="proj-title-row">
+          <img class="proj-lang-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg" alt="JavaScript"/>
+          <div class="proj-title">Vetra Providers</div>
+        </div>
+        <span class="proj-arrow">&#8599;</span>
+      </div>
+      <p class="proj-desc">Pluggable movie and anime streaming scraper with HLS support. Modular provider architecture.</p>
+      <div class="proj-footer">
+        <div class="proj-tags"><span class="tag">JavaScript</span><span class="tag">HLS</span><span class="tag">Scraper</span></div>
+        <span class="proj-stars">3 stars</span>
+      </div>
+    </a>
+
+    <a class="proj-card pc-tcp reveal" href="https://github.com/suadatbiniqbal/TerminalTalk-TCP-Server" target="_blank" rel="noopener">
+      <div class="proj-top">
+        <div class="proj-title-row">
+          <img class="proj-lang-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg" alt="C++"/>
+          <div class="proj-title">TerminalTalk</div>
+        </div>
+        <span class="proj-arrow">&#8599;</span>
+      </div>
+      <p class="proj-desc">Multi-client TCP chat server in C++17. Concurrent connections, real-time broadcasting, clean terminal UI.</p>
+      <div class="proj-footer">
+        <div class="proj-tags"><span class="tag">C++</span><span class="tag">TCP</span><span class="tag">Networking</span></div>
+        <span class="proj-stars">4 stars</span>
+      </div>
+    </a>
+
+    <a class="proj-card pc-veil reveal" href="https://github.com/suadatbiniqbal/VeilScrape" target="_blank" rel="noopener">
+      <div class="proj-top">
+        <div class="proj-title-row">
+          <img class="proj-lang-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" alt="Python"/>
+          <div class="proj-title">VeilScrape</div>
+        </div>
+        <span class="proj-arrow">&#8599;</span>
+      </div>
+      <p class="proj-desc">Python GTK tool to scrape .onion sites over a SOCKS5 Tor proxy. Text, links, images and files.</p>
+      <div class="proj-footer">
+        <div class="proj-tags"><span class="tag">Python</span><span class="tag">GTK</span><span class="tag">Tor</span></div>
+        <span class="proj-stars">3 stars</span>
+      </div>
+    </a>
+
+    <a class="proj-card pc-yanime reveal" href="https://github.com/suadatbiniqbal/yanime-providers" target="_blank" rel="noopener">
+      <div class="proj-top">
+        <div class="proj-title-row">
+          <img class="proj-lang-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg" alt="JavaScript"/>
+          <div class="proj-title">Yanime Providers</div>
+        </div>
+        <span class="proj-arrow">&#8599;</span>
+      </div>
+      <p class="proj-desc">Streaming source providers for the Yanime web app. Modular scraper architecture for anime delivery.</p>
+      <div class="proj-footer">
+        <div class="proj-tags"><span class="tag">JavaScript</span><span class="tag">Anime</span><span class="tag">Streaming</span></div>
+        <span class="proj-stars">2 stars</span>
+      </div>
+    </a>
+
+  </div>
+  <div style="margin-top:20px;text-align:right">
+    <a href="https://github.com/suadatbiniqbal" target="_blank" rel="noopener"
+       style="font-size:13px;font-weight:400;color:var(--blue);text-decoration:none;transition:opacity .2s"
+       onmouseover="this.style.opacity=.6" onmouseout="this.style.opacity=1">
+      All repositories &#8599;
+    </a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONTACT -->
+<section class="section" id="contact">
+  <div class="contact-card reveal">
+    <div class="contact-glow"></div>
+    <p class="contact-label">Get in touch</p>
+    <h2 class="contact-title">Let's build something.</h2>
+    <p class="contact-italic">Open to collaboration, freelance, and interesting problems.</p>
+    <a href="mailto:business.suadat@gmail.com" class="contact-email">business.suadat@gmail.com</a>
+    <div class="contact-btns">
+      <a href="https://github.com/suadatbiniqbal" target="_blank" rel="noopener" class="btn btn-light">GitHub</a>
+      <a href="mailto:business.suadat@gmail.com" class="btn btn-dark">Send an email</a>
+    </div>
+  </div>
+</section>
+
+<footer>&copy; 2026 Suadat Bin Iqbal. All rights reserved.</footer>
+
+<script>
+// ── Scroll reveal
+const obs=new IntersectionObserver(e=>{e.forEach(e=>e.isIntersecting&&e.target.classList.add('visible'))},{threshold:.1,rootMargin:'0px 0px -28px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+
+
+// ── Terminal typewriter
+(()=>{
+  const lines=[
+    {p:'~/suadat',cmd:' git push origin main',delay:0},
+    {p:'',out:' Pushed 3 commits to harmber',cls:'term-green',delay:900},
+    {p:'~/suadat',cmd:' ./build.sh --release',delay:1700},
+    {p:'',out:' Build complete. 0 errors.',cls:'term-green',delay:2700},
+  ];
+  const container=document.getElementById('term-lines');
+  const cursor=document.getElementById('term-cursor');
+  let li=0;
+  function nextLine(){
+    if(li>=lines.length){cursor.style.display='inline-block';return;}
+    const l=lines[li++];
+    setTimeout(()=>{
+      const div=document.createElement('div');
+      div.className='term-line';
+      if(l.out){
+        div.innerHTML=`<span class="${l.cls}">${l.out}</span>`;
+        container.appendChild(div);cursor.style.display='none';
+        nextLine();
+      } else {
+        div.innerHTML=`<span class="term-prompt">${l.p} $</span><span id="tw"></span>`;
+        container.appendChild(div);
+        let i=0,tw=div.querySelector('#tw');
+        cursor.style.display='none';
+        const t=setInterval(()=>{
+          if(i<l.cmd.length){tw.textContent+=l.cmd[i++];}
+          else{clearInterval(t);nextLine();}
+        },45);
+      }
+    },l.delay);
+  }
+  nextLine();
+})();
+</script>
+</body>
+</html>

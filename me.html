@@ -79,8 +79,23 @@ body{
   display:flex;flex-direction:column;
   align-items:center;justify-content:center;
   padding:80px 24px 64px;
-  position:relative;overflow:hidden;
+  position:relative;
   text-align:center;
+}
+/* scrim — tones the gif so text stays legible */
+.hero::before{
+  content:'';
+  position:absolute;inset:0;z-index:1;
+  background:var(--hero-overlay);
+  pointer-events:none;
+}
+/* bottom fade — dissolves gif into page bg */
+.hero::after{
+  content:'';
+  position:absolute;left:0;right:0;bottom:0;z-index:2;
+  height:38%;
+  background:linear-gradient(to bottom,transparent 0%,var(--bg) 100%);
+  pointer-events:none;
 }
 .hero-gif{
   position:absolute;inset:0;z-index:0;
@@ -90,40 +105,7 @@ body{
 
 .hero-inner{position:relative;z-index:3}
 
-/* ── TERMINAL CARD ── */
-.terminal{
-  background:var(--term-bg);
-  border:1px solid var(--term-border);
-  border-radius:12px;
-  padding:16px 20px;
-  text-align:left;
-  margin:0 auto 32px;
-  max-width:340px;
-  width:100%;
-  font-family:'Courier New',Courier,monospace;
-  font-size:12.5px;
-  line-height:1.7;
-  position:relative;
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
-  opacity:0;animation:fadeUp .55s .55s ease forwards;
-}
-.term-bar{
-  display:flex;align-items:center;gap:6px;
-  margin-bottom:10px;
-  padding-bottom:10px;
-  border-bottom:1px solid var(--term-border);
-}
-.term-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.term-line{color:var(--term-text);white-space:nowrap;overflow:hidden}
-.term-prompt{color:var(--term-prompt)}
-.term-green{color:var(--term-green)}
-.term-cursor{
-  display:inline-block;width:7px;height:13px;
-  background:var(--term-text);vertical-align:middle;
-  animation:blink .9s step-end infinite;margin-left:2px;
-}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
 
 /* avatar — no ring, just clean shadow */
 .avatar{
@@ -307,15 +289,7 @@ footer{text-align:center;padding:34px 24px;font-size:12px;color:var(--text3);bor
     <p class="hero-eyebrow">Developer</p>
     <h1 class="hero-name">Suadat Bin Iqbal.</h1>
     <p class="hero-sub">Building mobile apps, systems software,<br><em>and things that are a bit unusual.</em></p>
-    <div class="terminal">
-      <div class="term-bar">
-        <div class="term-dot" style="background:#ff5f57"></div>
-        <div class="term-dot" style="background:#febc2e"></div>
-        <div class="term-dot" style="background:#28c840"></div>
-      </div>
-      <div id="term-lines"></div>
-      <span id="term-cursor" class="term-cursor" style="display:none"></span>
-    </div>
+
     <div class="hero-btns">
       <a href="#projects" class="btn btn-dark">View Work</a>
       <a href="https://github.com/suadatbiniqbal" target="_blank" rel="noopener" class="btn btn-light">GitHub</a>
@@ -516,41 +490,7 @@ document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
 
 
-// ── Terminal typewriter
-(()=>{
-  const lines=[
-    {p:'~/suadat',cmd:' git push origin main',delay:0},
-    {p:'',out:' Pushed 3 commits to harmber',cls:'term-green',delay:900},
-    {p:'~/suadat',cmd:' ./build.sh --release',delay:1700},
-    {p:'',out:' Build complete. 0 errors.',cls:'term-green',delay:2700},
-  ];
-  const container=document.getElementById('term-lines');
-  const cursor=document.getElementById('term-cursor');
-  let li=0;
-  function nextLine(){
-    if(li>=lines.length){cursor.style.display='inline-block';return;}
-    const l=lines[li++];
-    setTimeout(()=>{
-      const div=document.createElement('div');
-      div.className='term-line';
-      if(l.out){
-        div.innerHTML=`<span class="${l.cls}">${l.out}</span>`;
-        container.appendChild(div);cursor.style.display='none';
-        nextLine();
-      } else {
-        div.innerHTML=`<span class="term-prompt">${l.p} $</span><span id="tw"></span>`;
-        container.appendChild(div);
-        let i=0,tw=div.querySelector('#tw');
-        cursor.style.display='none';
-        const t=setInterval(()=>{
-          if(i<l.cmd.length){tw.textContent+=l.cmd[i++];}
-          else{clearInterval(t);nextLine();}
-        },45);
-      }
-    },l.delay);
-  }
-  nextLine();
-})();
+
 </script>
 </body>
 </html>

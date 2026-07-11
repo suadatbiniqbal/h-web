@@ -518,7 +518,7 @@ document.querySelectorAll(".reveal").forEach(el=>obs.observe(el));
     const fh=ctx.createBiquadFilter();fh.type="lowpass";fh.frequency.value=220;
     const gh=ctx.createGain();gh.gain.value=0.35;
     sh.connect(fh);fh.connect(gh);gh.connect(traf);sh.start();
-    // Mid city wash
+    // Mid city wash v 
     const sm=noiseSrc(noise);
     const fm=ctx.createBiquadFilter();fm.type="bandpass";fm.frequency.value=520;fm.Q.value=0.6;
     const gm=ctx.createGain();gm.gain.value=0.22;

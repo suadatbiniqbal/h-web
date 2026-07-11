@@ -1,4 +1,23 @@
 /* =========================================
+   SELF-HOSTED FONTS — ARIAL NARROW
+========================================= */
+@font-face {
+  font-family: "Arial Narrow";
+  src: url("font/arialnarrow.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Arial Narrow";
+  src: url("font/arialnarrow_italic.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* =========================================
    HARMERB LANDING PAGE — REWRITTEN CSS
 ========================================= */
 
@@ -6,7 +25,7 @@
    DESIGN TOKENS
 ========================================= */
 :root {
-  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-sans: "Arial Narrow", "Helvetica Neue", Helvetica;
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 
   --radius-xs: 8px;
@@ -147,7 +166,7 @@ button {
 body {
   min-height: 100vh;
   overflow-x: hidden;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Arial Narrow", "Helvetica Neue", Helvetica;
   color: var(--text);
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
@@ -160,7 +179,7 @@ h1, h2, h3, h4, h5, h6,
 p, span, a, li, button, input,
 textarea, select, label, caption,
 th, td, blockquote {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Arial Narrow", "Helvetica Neue", Helvetica;
 }
 
 /* =========================================
@@ -915,7 +934,7 @@ body::before {
 
 .mask-inner {
   display: block;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Arial Narrow", "Helvetica Neue", Helvetica;
   font-size: clamp(3rem, 8vw, 6.8rem);
   font-weight: 900;
   letter-spacing: -0.035em;
@@ -947,7 +966,7 @@ body::before {
 .hero-desc {
   max-width: 520px;
   margin-top: 24px;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Arial Narrow", "Helvetica Neue", Helvetica;
   color: var(--text-dim);
   font-size: clamp(0.88rem, 1.8vw, 1rem);
   line-height: 1.8;
@@ -2314,7 +2333,7 @@ body::before {
 
 /* Hero appname text — explicit Helvetica */
 .hero-appname-text {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-family: "Arial Narrow", "Helvetica Neue", Helvetica !important;
 }
 
 /* =========================================
@@ -2350,7 +2369,7 @@ body::before {
 
 /* Download heading — Helvetica */
 .dl-h, .dl-mask {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-family: "Arial Narrow", "Helvetica Neue", Helvetica !important;
 }
 
 /* 3D hover on the card */
@@ -2429,6 +2448,6 @@ body::before {
 .hero-actions *,
 .hero-trust *,
 .hero-appname * {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-family: "Arial Narrow", "Helvetica Neue", Helvetica !important;
 }
 

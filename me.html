@@ -22,58 +22,30 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-/* ── LIGHT TOKENS (dark glows on white) ── */
+/* ── DARK TOKENS — always dark ── */
 :root{
-  --hero-overlay:rgba(255,255,255,0.55);
-  --bg:#f2f2f7;
-  --bg2:#e5e5ea;
-  --surface:#ffffff;
-  --border:rgba(0,0,0,0.08);
-  --border2:rgba(0,0,0,0.13);
-  --text:#1c1c1e;
-  --text2:#3a3a3c;
-  --text3:#8e8e93;
-  --blue:#0071e3;
-  --shadow-card:0 2px 16px rgba(0,0,0,0.07);
-  --glow-a:rgba(0,0,0,0.10);
-  --glow-b:rgba(0,0,0,0.07);
-  --glow-c:rgba(0,0,0,0.06);
-  --avatar-ring:#d1d1d6;
-  --matrix-color:rgba(0,0,0,0.07);
-  --matrix-char:#1c1c1e;
-  --term-bg:rgba(0,0,0,0.04);
-  --term-border:rgba(0,0,0,0.10);
-  --term-text:#1c1c1e;
-  --term-green:#15803d;
-  --term-prompt:#0071e3;
-}
-
-/* ── DARK TOKENS (light glows on black) ── */
-@media(prefers-color-scheme:dark){
-  :root{
-    --hero-overlay:rgba(0,0,0,0.62);
-    --bg:#0a0a0a;
-    --bg2:#1c1c1e;
-    --surface:#1a1a1a;
-    --border:rgba(255,255,255,0.08);
-    --border2:rgba(255,255,255,0.14);
-    --text:#f5f5f7;
-    --text2:#aeaeb2;
-    --text3:#6e6e73;
-    --blue:#2997ff;
-    --shadow-card:0 2px 20px rgba(0,0,0,0.35);
-    --glow-a:rgba(255,255,255,0.07);
-    --glow-b:rgba(255,255,255,0.05);
-    --glow-c:rgba(255,255,255,0.04);
-    --avatar-ring:#2c2c2e;
-    --matrix-color:rgba(255,255,255,0.04);
-    --matrix-char:#f5f5f7;
-    --term-bg:rgba(255,255,255,0.04);
-    --term-border:rgba(255,255,255,0.10);
-    --term-text:#f5f5f7;
-    --term-green:#4ade80;
-    --term-prompt:#2997ff;
-  }
+  --hero-overlay:rgba(0,0,0,0.62);
+  --bg:#0a0a0a;
+  --bg2:#1c1c1e;
+  --surface:#1a1a1a;
+  --border:rgba(255,255,255,0.08);
+  --border2:rgba(255,255,255,0.14);
+  --text:#f5f5f7;
+  --text2:#aeaeb2;
+  --text3:#6e6e73;
+  --blue:#2997ff;
+  --shadow-card:0 2px 20px rgba(0,0,0,0.35);
+  --glow-a:rgba(255,255,255,0.07);
+  --glow-b:rgba(255,255,255,0.05);
+  --glow-c:rgba(255,255,255,0.04);
+  --avatar-ring:#2c2c2e;
+  --matrix-color:rgba(255,255,255,0.04);
+  --matrix-char:#f5f5f7;
+  --term-bg:rgba(255,255,255,0.04);
+  --term-border:rgba(255,255,255,0.10);
+  --term-text:#f5f5f7;
+  --term-green:#4ade80;
+  --term-prompt:#2997ff;
 }
 
 html{scroll-behavior:smooth}

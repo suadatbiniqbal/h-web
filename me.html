@@ -264,28 +264,6 @@ footer{text-align:center;padding:34px 24px;font-size:12px;color:var(--text3);bor
   .contact-btns{flex-direction:column;align-items:center}
 }
 
-/* ── AMBIENT SOUND TOGGLE ── */
-#amb-btn{
-  position:fixed;bottom:24px;right:24px;z-index:9999;
-  width:44px;height:44px;border-radius:50%;
-  background:rgba(255,255,255,0.07);
-  border:1px solid rgba(255,255,255,0.14);
-  backdrop-filter:blur(16px);
-  -webkit-backdrop-filter:blur(16px);
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:background .2s,transform .2s;
-  color:rgba(255,255,255,0.55);
-}
-#amb-btn:hover{background:rgba(255,255,255,0.13);transform:scale(1.1)}
-#amb-btn.active{color:#fff;background:rgba(255,255,255,0.12)}
-#amb-btn svg{width:18px;height:18px;flex-shrink:0}
-#amb-tooltip{
-  position:fixed;bottom:76px;right:24px;z-index:9998;
-  font-size:11px;letter-spacing:.04em;
-  color:rgba(255,255,255,0.45);white-space:nowrap;
-  pointer-events:none;opacity:0;transition:opacity .3s;
-}
-#amb-tooltip.show{opacity:1}
 </style>
 </head>
 <body>
@@ -494,142 +472,139 @@ footer{text-align:center;padding:34px 24px;font-size:12px;color:var(--text3);bor
 
 <script>
 // ── Scroll reveal
-const obs=new IntersectionObserver(e=>{e.forEach(e=>e.isIntersecting&&e.target.classList.add('visible'))},{threshold:.1,rootMargin:'0px 0px -28px 0px'});
-document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+const obs=new IntersectionObserver(e=>{e.forEach(e=>e.isIntersecting&&e.target.classList.add("visible"))},{threshold:.1,rootMargin:"0px 0px -28px 0px"});
+document.querySelectorAll(".reveal").forEach(el=>obs.observe(el));
 
-// ── Ambient Sound Engine ──────────────────────────────────────────────────────
+// ── Ambient Sound Engine
 (function(){
-  let ctx, rainGain, trafficGain, beepGain;
+  let ctx, rainGainNode;
   let running = false;
   let started = false;
 
+  function makeNoise(sec){
+    const len=ctx.sampleRate*sec;
+    const buf=ctx.createBuffer(2,len,ctx.sampleRate);
+    for(let c=0;c<2;c++){const d=buf.getChannelData(c);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;}
+    return buf;
+  }
+  function noiseSrc(buf){const s=ctx.createBufferSource();s.buffer=buf;s.loop=true;return s;}
+
+  // RAIN — light drizzle
+  function buildRain(dest){
+    rainGainNode=ctx.createGain(); rainGainNode.gain.value=0.18; rainGainNode.connect(dest);
+    const noise=makeNoise(4);
+    // Layer 1: high hiss 5-8 kHz (mist/leaves)
+    const s1=noiseSrc(noise);
+    const f1=ctx.createBiquadFilter();f1.type="bandpass";f1.frequency.value=6500;f1.Q.value=0.9;
+    const g1=ctx.createGain();g1.gain.value=0.28;
+    s1.connect(f1);f1.connect(g1);g1.connect(rainGainNode);s1.start();
+    // Layer 2: soft mid patter 2-3 kHz (light drops)
+    const s2=noiseSrc(noise);
+    const f2=ctx.createBiquadFilter();f2.type="bandpass";f2.frequency.value=2400;f2.Q.value=0.6;
+    const g2=ctx.createGain();g2.gain.value=0.14;
+    s2.connect(f2);f2.connect(g2);g2.connect(rainGainNode);s2.start();
+    // Slow gentle flutter (light drizzle feel)
+    const lfo=ctx.createOscillator();lfo.frequency.value=2.5;
+    const lfoG=ctx.createGain();lfoG.gain.value=0.03;
+    lfo.connect(lfoG);lfoG.connect(rainGainNode.gain);lfo.start();
+  }
+
+  // TRAFFIC — busy street
+  function buildTraffic(dest){
+    const traf=ctx.createGain();traf.gain.value=0.5;traf.connect(dest);
+    const noise=makeNoise(6);
+    // City hum base
+    const sh=noiseSrc(noise);
+    const fh=ctx.createBiquadFilter();fh.type="lowpass";fh.frequency.value=220;
+    const gh=ctx.createGain();gh.gain.value=0.35;
+    sh.connect(fh);fh.connect(gh);gh.connect(traf);sh.start();
+    // Mid city wash
+    const sm=noiseSrc(noise);
+    const fm=ctx.createBiquadFilter();fm.type="bandpass";fm.frequency.value=520;fm.Q.value=0.6;
+    const gm=ctx.createGain();gm.gain.value=0.22;
+    sm.connect(fm);fm.connect(gm);gm.connect(traf);sm.start();
+    // Stop-and-go swell
+    const sl=ctx.createOscillator();sl.frequency.value=0.04;
+    const slG=ctx.createGain();slG.gain.value=0.12;
+    sl.connect(slG);slG.connect(traf.gain);sl.start();
+    // Car passes (Doppler)
+    function carPass(){
+      if(!running){setTimeout(carPass,3000+Math.random()*4000);return;}
+      const scp=noiseSrc(noise),fcp=ctx.createBiquadFilter(),gcp=ctx.createGain(),pan=ctx.createStereoPanner();
+      fcp.type="bandpass";
+      const now=ctx.currentTime,dur=1.8+Math.random()*1.4;
+      fcp.frequency.setValueAtTime(900+Math.random()*400,now);
+      fcp.frequency.linearRampToValueAtTime(280+Math.random()*100,now+dur);
+      fcp.Q.value=1.2;
+      gcp.gain.setValueAtTime(0,now);
+      gcp.gain.linearRampToValueAtTime(0.38+Math.random()*0.18,now+dur*0.35);
+      gcp.gain.linearRampToValueAtTime(0,now+dur);
+      pan.pan.setValueAtTime(-0.8,now);pan.pan.linearRampToValueAtTime(0.8,now+dur);
+      scp.connect(fcp);fcp.connect(gcp);gcp.connect(pan);pan.connect(traf);
+      scp.start(now);scp.stop(now+dur+0.1);
+      setTimeout(carPass,2200+Math.random()*3800);
+    }
+    setTimeout(carPass,800);
+    // Horn honks
+    function horn(){
+      if(!running){setTimeout(horn,6000+Math.random()*9000);return;}
+      const now=ctx.currentTime,osc=ctx.createOscillator(),gh2=ctx.createGain();
+      osc.type="square";osc.frequency.value=440+Math.random()*55;
+      const hl=0.18+Math.random()*0.28;
+      gh2.gain.setValueAtTime(0,now);gh2.gain.linearRampToValueAtTime(0.07,now+0.03);
+      gh2.gain.setValueAtTime(0.07,now+hl);gh2.gain.linearRampToValueAtTime(0,now+hl+0.06);
+      if(Math.random()<0.4){gh2.gain.setValueAtTime(0,now+hl+0.14);gh2.gain.linearRampToValueAtTime(0.065,now+hl+0.17);gh2.gain.linearRampToValueAtTime(0,now+hl+0.38);}
+      osc.connect(gh2);gh2.connect(traf);osc.start(now);osc.stop(now+hl+0.6);
+      setTimeout(horn,6000+Math.random()*10000);
+    }
+    setTimeout(horn,3500);
+  }
+
+  // TRAFFIC LIGHT BEEP
+  function buildBeep(dest){
+    const bg=ctx.createGain();bg.gain.value=0;bg.connect(dest);
+    const osc=ctx.createOscillator();osc.type="sine";osc.frequency.value=880;
+    osc.connect(bg);osc.start();
+    function beep(){
+      if(!running){setTimeout(beep,3000);return;}
+      const now=ctx.currentTime;
+      bg.gain.cancelScheduledValues(now);
+      bg.gain.setValueAtTime(0,now);bg.gain.linearRampToValueAtTime(0.07,now+0.015);bg.gain.linearRampToValueAtTime(0,now+0.12);
+      bg.gain.setValueAtTime(0,now+0.19);bg.gain.linearRampToValueAtTime(0.07,now+0.205);bg.gain.linearRampToValueAtTime(0,now+0.32);
+      setTimeout(beep,2600+Math.random()*800);
+    }
+    setTimeout(beep,1000);
+  }
+
+  // Build & start
   function buildAudio(){
-    if(started) return;
-    started = true;
-    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if(started)return;
+    started=true;
+    ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const master=ctx.createGain();master.gain.value=1;master.connect(ctx.destination);
+    buildRain(master);
+    buildTraffic(master);
+    buildBeep(master);
+    running=true;
 
-    // ── Rain: white noise through bandpass filter ──
-    const RAIN_BUF = ctx.sampleRate * 2;
-    const rainBuf  = ctx.createBuffer(1, RAIN_BUF, ctx.sampleRate);
-    const rainData = rainBuf.getChannelData(0);
-    for(let i=0;i<RAIN_BUF;i++) rainData[i] = Math.random()*2-1;
-    function loopRain(){
-      const src = ctx.createBufferSource();
-      src.buffer = rainBuf;
-      src.loop   = true;
-      const lp   = ctx.createBiquadFilter();
-      lp.type    = 'bandpass';
-      lp.frequency.value = 1200;
-      lp.Q.value = 0.4;
-      rainGain   = ctx.createGain();
-      rainGain.gain.value = 0.28;
-      src.connect(lp);
-      lp.connect(rainGain);
-      rainGain.connect(ctx.destination);
-      src.start();
-    }
-    loopRain();
-
-    // ── Traffic rumble: low noise + LFO swell ──
-    const T_BUF  = ctx.sampleRate * 4;
-    const tBuf   = ctx.createBuffer(1, T_BUF, ctx.sampleRate);
-    const tData  = tBuf.getChannelData(0);
-    for(let i=0;i<T_BUF;i++) tData[i] = Math.random()*2-1;
-    const tSrc   = ctx.createBufferSource();
-    tSrc.buffer  = tBuf;
-    tSrc.loop    = true;
-    const tlp    = ctx.createBiquadFilter();
-    tlp.type     = 'lowpass';
-    tlp.frequency.value = 180;
-    const lfo    = ctx.createOscillator();
-    lfo.frequency.value = 0.06;
-    const lfoG   = ctx.createGain();
-    lfoG.gain.value = 0.09;
-    trafficGain  = ctx.createGain();
-    trafficGain.gain.value = 0.18;
-    lfo.connect(lfoG);
-    lfoG.connect(trafficGain.gain);
-    tSrc.connect(tlp);
-    tlp.connect(trafficGain);
-    trafficGain.connect(ctx.destination);
-    tSrc.start();
-    lfo.start();
-
-    // ── Traffic light beep: 880 Hz tone every ~2.8s ──
-    beepGain = ctx.createGain();
-    beepGain.gain.value = 0;
-    beepGain.connect(ctx.destination);
-    const beepOsc = ctx.createOscillator();
-    beepOsc.type  = 'sine';
-    beepOsc.frequency.value = 880;
-    beepOsc.connect(beepGain);
-    beepOsc.start();
-    function doBeep(){
-      if(!running) return;
-      const now = ctx.currentTime;
-      beepGain.gain.cancelScheduledValues(now);
-      beepGain.gain.setValueAtTime(0, now);
-      beepGain.gain.linearRampToValueAtTime(0.09, now+0.02);
-      beepGain.gain.linearRampToValueAtTime(0, now+0.14);
-      // double-beep (traffic light pattern)
-      beepGain.gain.setValueAtTime(0, now+0.22);
-      beepGain.gain.linearRampToValueAtTime(0.09, now+0.24);
-      beepGain.gain.linearRampToValueAtTime(0, now+0.38);
-      setTimeout(doBeep, 2800 + Math.random()*600);
-    }
-    setTimeout(doBeep, 1200);
-
-    running = true;
-  }
-
-  function setRunning(on){
-    if(!started) buildAudio();
-    running = on;
-    if(!ctx) return;
-    if(on){
-      ctx.resume();
-      if(rainGain)    rainGain.gain.setTargetAtTime(0.28, ctx.currentTime, 0.5);
-      if(trafficGain) trafficGain.gain.setTargetAtTime(0.18, ctx.currentTime, 0.5);
-    } else {
-      if(rainGain)    rainGain.gain.setTargetAtTime(0, ctx.currentTime, 0.4);
-      if(trafficGain) trafficGain.gain.setTargetAtTime(0, ctx.currentTime, 0.4);
-      if(beepGain)    beepGain.gain.setTargetAtTime(0, ctx.currentTime, 0.1);
+    // Rain fades as hero scrolls out of view
+    const hero=document.querySelector(".hero");
+    if(hero&&rainGainNode){
+      const thresholds=[0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1];
+      new IntersectionObserver(entries=>{
+        const ratio=entries[0].intersectionRatio;
+        rainGainNode.gain.setTargetAtTime(0.18*ratio,ctx.currentTime,0.8);
+      },{threshold:thresholds}).observe(hero);
     }
   }
 
-  // Button
-  const btn  = document.createElement('button');
-  btn.id     = 'amb-btn';
-  btn.setAttribute('aria-label','Toggle ambient sounds');
-  btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="amb-icon">
-    <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
-    <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/>
-    <path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
-  </svg>`;
-  const tip  = document.createElement('div');
-  tip.id     = 'amb-tooltip';
-  tip.textContent = 'Ambient sounds';
-  document.body.appendChild(tip);
-  document.body.appendChild(btn);
-
-  btn.addEventListener('mouseenter',()=>tip.classList.add('show'));
-  btn.addEventListener('mouseleave',()=>tip.classList.remove('show'));
-
-  btn.addEventListener('click',()=>{
-    const on = !running;
-    setRunning(on);
-    btn.classList.toggle('active', on);
-    tip.textContent = on ? 'Sounds on' : 'Sounds off';
-  });
-
-  // Auto-start on first interaction
-  function firstInteraction(){
-    setRunning(true);
-    btn.classList.add('active');
-    tip.textContent = 'Sounds on';
-    ['click','scroll','keydown','touchstart'].forEach(e=>document.removeEventListener(e,firstInteraction));
+  function start(){
+    if(started)return;
+    buildAudio();
+    ctx.resume();
   }
-  ['click','scroll','keydown','touchstart'].forEach(e=>document.addEventListener(e,firstInteraction,{once:true,passive:true}));
+  ["click","scroll","keydown","touchstart","mousemove"]
+    .forEach(e=>document.addEventListener(e,start,{once:true,passive:true}));
 
 })();
 </script>

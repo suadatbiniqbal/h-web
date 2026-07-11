@@ -489,9 +489,9 @@ document.querySelectorAll(".reveal").forEach(el=>obs.observe(el));
   }
   function noiseSrc(buf){const s=ctx.createBufferSource();s.buffer=buf;s.loop=true;return s;}
 
-  // RAIN — light drizzle
+  // RAIN — light drizzle (45% gain)
   function buildRain(dest){
-    rainGainNode=ctx.createGain(); rainGainNode.gain.value=0.18; rainGainNode.connect(dest);
+    rainGainNode=ctx.createGain(); rainGainNode.gain.value=0.08; rainGainNode.connect(dest);
     const noise=makeNoise(4);
     // Layer 1: high hiss 5-8 kHz (mist/leaves)
     const s1=noiseSrc(noise);
@@ -524,9 +524,9 @@ document.querySelectorAll(".reveal").forEach(el=>obs.observe(el));
     const gm=ctx.createGain();gm.gain.value=0.22;
     sm.connect(fm);fm.connect(gm);gm.connect(traf);sm.start();
     // Stop-and-go swell
-    const sl=ctx.createOscillator();sl.frequency.value=0.04;
-    const slG=ctx.createGain();slG.gain.value=0.12;
-    sl.connect(slG);slG.connect(traf.gain);sl.start();
+    const lfo=ctx.createOscillator();lfo.frequency.value=0.04;
+    const lfoG=ctx.createGain();lfoG.gain.value=0.12;
+    lfo.connect(lfoG);lfoG.connect(traf.gain);lfo.start();
     // Car passes (Doppler)
     function carPass(){
       if(!running){setTimeout(carPass,3000+Math.random()*4000);return;}
@@ -576,6 +576,51 @@ document.querySelectorAll(".reveal").forEach(el=>obs.observe(el));
     setTimeout(beep,1000);
   }
 
+  // MUSIC PLAYER WITH CROSSFADE
+  let musicBuffer = null;
+  function buildMusic(dest){
+    fetch("music/mice_on_venus_sad.mp3")
+      .then(r => r.arrayBuffer())
+      .then(buf => ctx.decodeAudioData(buf))
+      .then(decoded => {
+        musicBuffer = decoded;
+        startMusicLoop(dest);
+      })
+      .catch(e => console.error("Error loading bg music:", e));
+  }
+
+  function startMusicLoop(dest) {
+    const fadeTime = 6;
+    function playInstance(startTime) {
+      if (!running || !musicBuffer) return;
+      const src = ctx.createBufferSource();
+      src.buffer = musicBuffer;
+      const gainNode = ctx.createGain();
+      
+      const targetVol = 0.35;
+      
+      gainNode.gain.setValueAtTime(0, startTime);
+      gainNode.gain.linearRampToValueAtTime(targetVol, startTime + fadeTime);
+      
+      src.connect(gainNode);
+      gainNode.connect(dest);
+      src.start(startTime);
+      
+      const duration = musicBuffer.duration;
+      const nextStartTime = startTime + duration - fadeTime;
+      
+      gainNode.gain.setValueAtTime(targetVol, nextStartTime);
+      gainNode.gain.linearRampToValueAtTime(0, nextStartTime + fadeTime);
+      
+      const delayMs = (nextStartTime - ctx.currentTime) * 1000;
+      setTimeout(() => {
+        playInstance(nextStartTime);
+      }, Math.max(0, delayMs));
+    }
+    
+    playInstance(ctx.currentTime);
+  }
+
   // Build & start
   function buildAudio(){
     if(started)return;
@@ -585,6 +630,7 @@ document.querySelectorAll(".reveal").forEach(el=>obs.observe(el));
     buildRain(master);
     buildTraffic(master);
     buildBeep(master);
+    buildMusic(master);
     running=true;
 
     // Rain fades as hero scrolls out of view
@@ -593,7 +639,7 @@ document.querySelectorAll(".reveal").forEach(el=>obs.observe(el));
       const thresholds=[0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1];
       new IntersectionObserver(entries=>{
         const ratio=entries[0].intersectionRatio;
-        rainGainNode.gain.setTargetAtTime(0.18*ratio,ctx.currentTime,0.8);
+        rainGainNode.gain.setTargetAtTime(0.08*ratio,ctx.currentTime,0.8);
       },{threshold:thresholds}).observe(hero);
     }
   }

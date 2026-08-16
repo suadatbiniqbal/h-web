@@ -99,6 +99,27 @@
   #app-banner .banner-cta:hover {
     opacity: 0.7;
   }
+  #app-banner .banner-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  #app-banner .banner-donate {
+    background: transparent;
+    color: #111;
+    border: 1.5px solid #bbb;
+    cursor: pointer;
+  }
+  [data-theme="dark"] #app-banner .banner-donate {
+    color: #111;
+    border-color: #999;
+  }
+  #app-banner .banner-donate:hover {
+    opacity: 1;
+    border-color: #555;
+    background: rgba(0,0,0,0.06);
+  }
   #app-banner .banner-close {
     position: absolute;
     right: 10px;
@@ -165,8 +186,8 @@
 
   <!-- Harmber Movies Banner -->
   <div id="app-banner" role="banner" aria-label="Harmber Movies app announcement">
-    <span class="banner-text"><strong>Support THis Mission</strong> </span>
-    <a href="https://yimberzol.org/donate" target="_blank" rel="noopener noreferrer" class="banner-cta" aria-label="Download Harmber Movies app">Donate</a>
+    <span class="banner-text">Download <strong>Harmber Movies</strong> — unlimited entertainment, free.</span>
+    <a href="https://app.harmber.xyz" target="_blank" rel="noopener noreferrer" class="banner-cta" aria-label="Download Harmber Movies app">Get the App</a>
     <button class="banner-close" id="bannerClose" aria-label="Dismiss" type="button">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
         <line x1="18" y1="6" x2="6" y2="18"/>
@@ -676,6 +697,15 @@
               Download APK
             </a>
           </div>
+
+          <div class="dl-support-row">
+            <p class="dl-support-text">Harmber is free forever. If it brings you joy, a small support goes a long way.</p>
+            <button class="btn-upi" id="donateTrigger" type="button" aria-haspopup="dialog">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              Donate
+            </button>
+          </div>
+
           <div class="dl-card-shine"></div>
         </div>
 
@@ -715,6 +745,7 @@
         <div class="ft-col">
           <h4>Links</h4>
           <a href="https://github.com/suadatbiniqbal/harmber" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="#" id="footerDonateLink">Donate</a>
         </div>
       </nav>
     </div>
@@ -753,6 +784,117 @@
 
   <!-- Ad Zone #7013881 -->
 
+  <!-- ── Donate Modal ── -->
+  <div class="donate-overlay" id="donateOverlay" role="dialog" aria-modal="true" aria-labelledby="donateTitle">
+    <div class="donate-modal">
+      <button class="donate-close" id="donateClose" type="button" aria-label="Close">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+
+      <h3 id="donateTitle">Support Harmber</h3>
+      <p class="donate-sub">Harmber is completely free. Every rupee helps keep it alive.</p>
+
+      <div class="donate-presets">
+        <button class="donate-preset" data-amount="100" type="button">₹100</button>
+        <button class="donate-preset" data-amount="200" type="button">₹200</button>
+        <button class="donate-preset" data-amount="500" type="button">₹500</button>
+        <button class="donate-preset" data-amount="1000" type="button">₹1000</button>
+      </div>
+
+      <div class="donate-custom-wrap">
+        <span class="donate-rupee">₹</span>
+        <input
+          type="number"
+          id="donateCustom"
+          class="donate-custom-input"
+          placeholder="Custom amount"
+          min="1"
+          step="1"
+          inputmode="numeric"
+          aria-label="Custom donation amount in rupees"
+        />
+      </div>
+
+      <button class="donate-cta" id="donateCta" type="button" disabled>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span id="donateCtaLabel">Select an amount</span>
+      </button>
+
+      <p class="donate-upi-id">UPI: suadatbiniqbal@okaxis</p>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    var overlay   = document.getElementById('donateOverlay');
+    var closeBtn  = document.getElementById('donateClose');
+    var cta       = document.getElementById('donateCta');
+    var ctaLabel  = document.getElementById('donateCtaLabel');
+    var customIn  = document.getElementById('donateCustom');
+    var presets   = document.querySelectorAll('.donate-preset');
+    var triggers  = [document.getElementById('donateTrigger'), document.getElementById('footerDonateLink'), document.getElementById('bannerDonateBtn')];
+    var selected  = 0;
+
+    function openModal() {
+      overlay.classList.add('donate-visible');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      overlay.classList.remove('donate-visible');
+      document.body.style.overflow = '';
+    }
+
+    function setAmount(amt) {
+      selected = amt;
+      presets.forEach(function (b) {
+        b.classList.toggle('active', parseInt(b.dataset.amount) === amt);
+      });
+      if (amt > 0) {
+        cta.disabled = false;
+        ctaLabel.textContent = 'Pay \u20b9' + amt + ' via UPI';
+      } else {
+        cta.disabled = true;
+        ctaLabel.textContent = 'Select an amount';
+      }
+    }
+
+    triggers.forEach(function (t) {
+      if (t) t.addEventListener('click', function (e) { e.preventDefault(); openModal(); });
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !overlay.hidden) closeModal(); });
+
+    presets.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        customIn.value = '';
+        setAmount(parseInt(btn.dataset.amount));
+      });
+    });
+
+    customIn.addEventListener('input', function () {
+      var val = parseInt(customIn.value);
+      presets.forEach(function (b) { b.classList.remove('active'); });
+      if (val > 0) {
+        selected = val;
+        cta.disabled = false;
+        ctaLabel.textContent = 'Pay \u20b9' + val + ' via UPI';
+      } else {
+        selected = 0;
+        cta.disabled = true;
+        ctaLabel.textContent = 'Enter an amount';
+      }
+    });
+
+    cta.addEventListener('click', function () {
+      if (!selected || selected < 1) return;
+      var upiUrl = 'upi://pay?pa=suadatbiniqbal%40okaxis&pn=Harmber&am=' + selected + '&cu=INR&tn=Support%20Harmber';
+      window.location.href = upiUrl;
+    });
+  })();
+  </script>
 
 </body>
 </html>

@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Donate & Support — Harmber</title>
+  <meta name="description" content="Support Harmber's development. Harmber is free forever and ad-free. Help keep the servers running and development active." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://harmber.xyz/donate" />
+  <meta name="theme-color" content="#000000" />
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/suadatbiniqbal/h-web/refs/heads/main/logo.png" />
+  
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://harmber.xyz/donate" />
+  <meta property="og:title" content="Donate & Support — Harmber" />
+  <meta property="og:description" content="Harmber is 100% free and ad-free. Support independent music streaming development." />
+  <meta property="og:image" content="https://raw.githubusercontent.com/suadatbiniqbal/h-web/refs/heads/main/logo.png" />
+  
+  <link rel="stylesheet" href="legal.css" />
+  <style>
+    .donate-box {
+      background: var(--bg2);
+      border: 1px solid var(--b2);
+      border-radius: 24px;
+      padding: 36px;
+      max-width: 580px;
+      margin: 0 auto 64px auto;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .donate-box::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 300px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .donate-presets {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 24px 0 16px 0;
+    }
+
+    .donate-preset {
+      background: var(--bg3);
+      border: 1px solid var(--b2);
+      color: var(--t);
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s var(--expo);
+    }
+
+    .donate-preset:hover {
+      background: var(--bg4);
+      border-color: rgba(255, 255, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .donate-preset.active {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+    }
+
+    .donate-custom-wrap {
+      position: relative;
+      margin-bottom: 24px;
+    }
+
+    .donate-rupee {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--m3);
+    }
+
+    .donate-custom-input {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--b2);
+      border-radius: 12px;
+      padding: 14px 16px 14px 38px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .donate-custom-input:focus {
+      border-color: rgba(255, 255, 255, 0.5);
+      background: var(--bg4);
+    }
+
+    .donate-cta-btn {
+      width: 100%;
+      background: #fff;
+      color: #000;
+      border: none;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s var(--expo);
+    }
+
+    .donate-cta-btn:hover:not(:disabled) {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(255, 255, 255, 0.2);
+    }
+
+    .donate-cta-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .upi-details-card {
+      background: var(--bg3);
+      border: 1px solid var(--b1);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .upi-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .upi-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--m3);
+    }
+
+    .upi-val {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.02em;
+    }
+
+    .copy-btn {
+      background: var(--bg4);
+      border: 1px solid var(--b2);
+      color: var(--m4);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .impact-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin: 28px 0;
+    }
+
+    .impact-card {
+      background: var(--bg2);
+      border: 1px solid var(--b1);
+      border-radius: 16px;
+      padding: 20px;
+      transition: border-color 0.2s, transform 0.2s var(--expo);
+    }
+
+    .impact-card:hover {
+      border-color: var(--b2);
+      transform: translateY(-2px);
+    }
+
+    .impact-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--bg3);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      color: var(--t);
+    }
+
+    .impact-card h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #fff;
+    }
+
+    .impact-card p {
+      font-size: 0.85rem;
+      color: var(--m3);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 640px) {
+      .donate-presets {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .impact-grid {
+        grid-template-columns: 1fr;
+      }
+      .upi-details-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .copy-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+  <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+  <header class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="/" class="wordmark">
+        <img src="https://raw.githubusercontent.com/suadatbiniqbal/h-web/refs/heads/main/logo.png" alt="Harmber" class="wordmark-img" />
+        Harmber
+      </a>
+      <a href="/" class="nav-back">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7" />
+        </svg>
+        Back to home
+      </a>
+    </div>
+  </header>
+
+  <div class="legal-hero">
+    <div class="lh-orb" aria-hidden="true"></div>
+    <div class="lh-inner">
+      <div class="legal-tag">Support</div>
+      <h1>Keep Harmber Alive</h1>
+      <p>Harmber is 100% free and ad-free forever. If Harmber brings music into your daily life, consider supporting its development with a small donation.</p>
+    </div>
+  </div>
+
+  <div class="legal-layout">
+    <aside class="legal-toc">
+      <p class="toc-label">On this page</p>
+      <nav>
+        <a href="#donate-section" class="tl active">Donate via UPI</a>
+        <a href="#why-support" class="tl">Why Support?</a>
+        <a href="#transparency" class="tl">Transparency & FAQ</a>
+      </nav>
+    </aside>
+
+    <main class="legal-content">
+
+      <section id="donate-section" class="ls">
+        <h2>Donate via UPI</h2>
+        <p>Select a preset amount or enter a custom contribution to launch your UPI app directly.</p>
+
+        <div class="donate-box">
+          <div class="donate-presets">
+            <button class="donate-preset" data-amount="100" type="button">₹100</button>
+            <button class="donate-preset" data-amount="200" type="button">₹200</button>
+            <button class="donate-preset" data-amount="500" type="button">₹500</button>
+            <button class="donate-preset" data-amount="1000" type="button">₹1000</button>
+          </div>
+
+          <div class="donate-custom-wrap">
+            <span class="donate-rupee">₹</span>
+            <input
+              type="number"
+              id="pageDonateCustom"
+              class="donate-custom-input"
+              placeholder="Custom amount"
+              min="1"
+              step="1"
+              inputmode="numeric"
+              aria-label="Custom donation amount in rupees"
+            />
+          </div>
+
+          <button class="donate-cta-btn" id="pageDonateCta" type="button" disabled>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span id="pageDonateCtaLabel">Select an amount</span>
+          </button>
+
+          <div class="upi-details-card">
+            <div class="upi-info">
+              <span class="upi-label">UPI VPA Address</span>
+              <span class="upi-val" id="upiVpaText">suadatbiniqbal@okaxis</span>
+            </div>
+            <button class="copy-btn" id="copyUpiBtn" type="button">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span id="copyBtnText">Copy VPA</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section id="why-support" class="ls">
+        <h2>Why Support Harmber?</h2>
+        <p>Building and maintaining a modern, ad-free music streaming app requires continuous effort and resources.</p>
+
+        <div class="impact-grid">
+          <div class="impact-card">
+            <div class="impact-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                <line x1="6" y1="18" x2="6.01" y2="18"></line>
+              </svg>
+            </div>
+            <h4>Server & Domain Costs</h4>
+            <p>Sustaining server infrastructure, CDN endpoints for lyrics/metadata, and domain renewals.</p>
+          </div>
+
+          <div class="impact-card">
+            <div class="impact-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+            </div>
+            <h4>Feature Development</h4>
+            <p>Enables adding new capabilities like enhanced equalizer, Spotify import upgrades, and offline cache speedups.</p>
+          </div>
+
+          <div class="impact-card">
+            <div class="impact-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+            </div>
+            <h4>Zero Ads & Tracking</h4>
+            <p>Harmber does not display intrusive ads or sell telemetry data. Your support replaces corporate ad revenue.</p>
+          </div>
+
+          <div class="impact-card">
+            <div class="impact-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                <line x1="15" y1="9" x2="15.01" y2="9"></line>
+              </svg>
+            </div>
+            <h4>Independent Developer</h4>
+            <p>Harmber is created and maintained independently with passion for clean software and pure music.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="transparency" class="ls">
+        <h2>Transparency & FAQ</h2>
+        <div class="callout cc">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          <p><strong>Is donating required to use Harmber?</strong><br/>
+          No! Harmber is completely free and open-source. All features remain unlocked for everyone whether you donate or not.</p>
+        </div>
+
+        <ul class="ll">
+          <li><strong>Are payments secure?</strong> — Yes. UPI payments happen directly inside your installed UPI banking apps (Google Pay, PhonePe, Paytm, BHIM, etc.). No card or banking credentials are collected by this site.</li>
+          <li><strong>Other ways to contribute?</strong> — If you can't contribute financially, starring the repository on GitHub, sharing Harmber with friends, or reporting bugs helps immensely!</li>
+        </ul>
+      </section>
+
+      <div class="legal-nav">
+        <a href="/" class="btn-ghost-sm">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 5l-7 7 7 7" />
+          </svg> Back to home
+        </a>
+        <a href="https://github.com/suadatbiniqbal/harmber" target="_blank" rel="noopener noreferrer" class="btn-ghost-sm">
+          Star on GitHub 
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </a>
+      </div>
+
+    </main>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <a href="/" class="wordmark wordmark-sm">
+        <img src="https://raw.githubusercontent.com/suadatbiniqbal/h-web/refs/heads/main/logo.png" alt="Harmber" class="wordmark-img" />
+        Harmber
+      </a>
+      <div class="footer-links">
+        <a href="/donate" aria-current="page">Donate</a>
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+        <a href="https://github.com/suadatbiniqbal/harmber" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
+      <p class="footer-copy">&copy; 2025 Harmber. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="legal.js"></script>
+  <script>
+    (function () {
+      var cta = document.getElementById('pageDonateCta');
+      var ctaLabel = document.getElementById('pageDonateCtaLabel');
+      var customIn = document.getElementById('pageDonateCustom');
+      var presets = document.querySelectorAll('.donate-preset');
+      var copyBtn = document.getElementById('copyUpiBtn');
+      var copyText = document.getElementById('copyBtnText');
+      var selected = 0;
+
+      function setAmount(amt) {
+        selected = amt;
+        presets.forEach(function (b) {
+          b.classList.toggle('active', parseInt(b.dataset.amount) === amt);
+        });
+        if (amt > 0) {
+          cta.disabled = false;
+          ctaLabel.textContent = 'Pay \u20b9' + amt + ' via UPI';
+        } else {
+          cta.disabled = true;
+          ctaLabel.textContent = 'Select an amount';
+        }
+      }
+
+      presets.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          customIn.value = '';
+          setAmount(parseInt(btn.dataset.amount));
+        });
+      });
+
+      customIn.addEventListener('input', function () {
+        var val = parseInt(customIn.value);
+        presets.forEach(function (b) { b.classList.remove('active'); });
+        if (val > 0) {
+          selected = val;
+          cta.disabled = false;
+          ctaLabel.textContent = 'Pay \u20b9' + val + ' via UPI';
+        } else {
+          selected = 0;
+          cta.disabled = true;
+          ctaLabel.textContent = 'Enter an amount';
+        }
+      });
+
+      cta.addEventListener('click', function () {
+        if (!selected || selected < 1) return;
+        var upiUrl = 'upi://pay?pa=suadatbiniqbal%40okaxis&pn=Harmber&am=' + selected + '&cu=INR&tn=Support%20Harmber';
+        window.location.href = upiUrl;
+      });
+
+      copyBtn.addEventListener('click', function () {
+        navigator.clipboard.writeText('suadatbiniqbal@okaxis').then(function () {
+          copyText.textContent = 'Copied!';
+          setTimeout(function () {
+            copyText.textContent = 'Copy VPA';
+          }, 2000);
+        });
+      });
+    })();
+  </script>
+</body>
+
+</html>
